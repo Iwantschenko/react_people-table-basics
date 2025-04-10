@@ -28,26 +28,26 @@ export const PeoplePage = () => {
     return <PeopleTable peopleList={peopleList} />;
   };
 
+  const callRequest = async () => {
+    try {
+      const peopleFromServer = await getPeople();
+      const deepCopy = peopleFromServer.map(person => ({
+        ...person,
+        mother: peopleFromServer.find(
+          mother => mother.name === person.motherName,
+        ),
+        father: peopleFromServer.find(
+          father => father.name === person.fatherName,
+        ),
+      }));
+
+      setPeopleList(deepCopy);
+    } catch {
+      setErrorMessage(true);
+    }
+  };
+
   useEffect(() => {
-    const callRequest = async () => {
-      try {
-        const peopleFromServer = await getPeople();
-        const deepCopy = peopleFromServer.map(person => ({
-          ...person,
-          mother: peopleFromServer.find(
-            mother => mother.name === person.motherName,
-          ),
-          father: peopleFromServer.find(
-            father => father.name === person.fatherName,
-          ),
-        }));
-
-        setPeopleList(deepCopy);
-      } catch {
-        setErrorMessage(true);
-      }
-    };
-
     callRequest();
   }, []);
 
@@ -55,9 +55,7 @@ export const PeoplePage = () => {
     <div className="container">
       <h1 className="title">People Page</h1>
 
-      <div className="block">
-        <div className="box table-container">{renderContent()}</div>
-      </div>
+      <div className="block">{renderContent()}</div>
     </div>
   );
 };
