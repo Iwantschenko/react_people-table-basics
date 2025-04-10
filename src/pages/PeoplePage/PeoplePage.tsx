@@ -29,9 +29,26 @@ export const PeoplePage = () => {
   };
 
   useEffect(() => {
-    getPeople()
-      .then(setPeopleList)
-      .catch(() => setErrorMessage(true));
+    const callRequest = async () => {
+      try {
+        const peopleFromServer = await getPeople();
+        const deepCopy = peopleFromServer.map(person => ({
+          ...person,
+          mother: peopleFromServer.find(
+            mother => mother.name === person.motherName,
+          ),
+          father: peopleFromServer.find(
+            father => father.name === person.fatherName,
+          ),
+        }));
+
+        setPeopleList(deepCopy);
+      } catch {
+        setErrorMessage(true);
+      }
+    };
+
+    callRequest();
   }, []);
 
   return (
