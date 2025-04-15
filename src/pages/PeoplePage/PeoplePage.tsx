@@ -8,26 +8,6 @@ export const PeoplePage = () => {
   const [peopleList, setPeopleList] = useState<Person[]>();
   const [errorMessage, setErrorMessage] = useState(false);
 
-  const renderContent = () => {
-    if (errorMessage) {
-      return (
-        <p data-cy="peopleLoadingError" className="has-text-danger">
-          Something went wrong
-        </p>
-      );
-    }
-
-    if (!peopleList) {
-      return <Loader />;
-    }
-
-    if (!peopleList.length) {
-      return <p data-cy="noPeopleMessage">There are no people on the server</p>;
-    }
-
-    return <PeopleTable peopleList={peopleList} />;
-  };
-
   const callRequest = async () => {
     try {
       const peopleFromServer = await getPeople();
@@ -55,7 +35,23 @@ export const PeoplePage = () => {
     <div className="container">
       <h1 className="title">People Page</h1>
 
-      <div className="block">{renderContent()}</div>
+      <div className="block">
+        {errorMessage && (
+          <p data-cy="peopleLoadingError" className="has-text-danger">
+            Something went wrong
+          </p>
+        )}
+
+        {!errorMessage && !peopleList && <Loader />}
+
+        {!errorMessage && peopleList && peopleList.length === 0 && (
+          <p data-cy="noPeopleMessage">There are no people on the server</p>
+        )}
+
+        {!errorMessage && peopleList && peopleList.length > 0 && (
+          <PeopleTable peopleList={peopleList} />
+        )}
+      </div>
     </div>
   );
 };
